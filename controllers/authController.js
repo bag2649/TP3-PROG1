@@ -34,8 +34,8 @@ exports.login = (req, res, next) => {
       const token = jwt.sign(
         {
           email: loadedUser.email,
-          lastName: loadedUser.lastName, 
-          firstName: loadedUser.firstName, 
+          lastname: loadedUser.lastname, 
+          firstname: loadedUser.firstname, 
           userId: loadedUser._id.toString(),
         },
         process.env.SECRET_JWT,
@@ -51,8 +51,8 @@ exports.login = (req, res, next) => {
 // Enregistre un utilisateur dans la bd
 exports.signup = (req, res, next) => {
   const email = req.body.email;
-  const lastName = req.body.lastName;
-  const firstName = req.body.firstName;
+  const lastname = req.body.lastname;
+  const firstname = req.body.firstname;
   const city = req.body.city;
   const password = req.body.password;
   const isAdmin = req.body.isAdmin;
@@ -64,8 +64,8 @@ exports.signup = (req, res, next) => {
     .then((hashedPassword) => {
       const user = new User({
         email: email,
-        lastName: lastName,
-        firstName: firstName,
+        lastname: lastname,
+        firstname: firstname,
         city: city,
         password: hashedPassword,
         isAdmin: isAdmin || false,

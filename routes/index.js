@@ -6,12 +6,12 @@ const productsController = require('../controllers/productsController');
 const categoryController = require('../controllers/categoryController');
 const userController = require('../controllers/userController');
 const cartController = require('../controllers/cartController');
-
+const searchController = require('../controllers/searchController');
 
 // isAuth est un middleware qui vérifie si l'utilisateur est authentifié
 const isAuth = require('../middleware/is-auth');
 //isAdmin est un middleware qui vérifie si l'utilisateur est administrateur
-const isAdmin = require('../middleware/is-admin')
+const isAdmin = require('../middleware/is-Admin')
 
 
 //Route products
@@ -38,8 +38,11 @@ router.delete('/users/:id',isAuth, userController.deleteUser);
 
 //Route cart
 router.get('/cart', isAuth, cartController.getCart);
-router.post('/cart', isAuth, cartController.addToCart);
+router.put('/cart', isAuth, cartController.addToCart);
 router.delete('/cart/:id', isAuth, cartController.removeFromCart);
+
+//Route search
+router.get('/search', searchController.searchProducts);
 
 // Export des routes pour utilisation dans app.js
 module.exports = router;

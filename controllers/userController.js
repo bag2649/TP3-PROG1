@@ -13,19 +13,24 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getUserById = (req, res, next) => {
-    const userId = req.params.id;
-  
-    User.findById(userId, '-email -password')
-      .then(user => {
-        if (!user) {
-          return res.status(404).json({ error: 'L\'utilisateur demandé n\'existe pas.' });
-        }
-        res.status(200).json(user);
-      })
-      .catch(error => {
-        res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de l\'utilisateur.', error });
-      });
-  };
+  const userId = req.params.id;
+
+  User.findById(userId, '-email -password')
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ error: "L'utilisateur demandé n'existe pas." });
+      }
+      res.status(200).json(user);
+    })
+    .catch(error => {
+      if (error.name === 'CastError' && error.kind === 'ObjectId') {
+        return res.status(404).json({ error: "L'utilisateur demandé n'existe pas." });
+      }
+      res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de l\'utilisateur.', error });
+    });
+};
+
+
 
   exports.getUserProfile = (req, res, next) => {
     const userId = req.user.userId; // Utilisez req.user.userId au lieu de req.userId
@@ -47,7 +52,7 @@ exports.getUserById = (req, res, next) => {
 
 exports.updateUser = (req, res, next) => {
   const userId = req.params.id;
-  const { firstName, lastName, city } = req.body;
+  const { firstname, lastname, city } = req.body;
 
   if (req.userId !== userId) {
     return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à modifier cet utilisateur.' });
@@ -59,8 +64,8 @@ exports.updateUser = (req, res, next) => {
         return res.status(404).json({ error: 'L\'utilisateur demandé n\'existe pas.' });
       }
 
-      user.firstName = firstName;
-      user.lastName = lastName;
+      user.firstname = firstname;
+      user.lastname = lastname;
       user.city = city;
 
       return user.save();
