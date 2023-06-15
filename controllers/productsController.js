@@ -77,42 +77,7 @@ exports.createProduct = (req, res, next) => {
 
 const mongoose = require('mongoose');
 
-exports.updateProduct = (req, res, next) => {
-  const { title, desc, imageUrl, categoryId, price, isSold } = req.body;
-  const productId = req.params.productId;
 
-  if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(404).json({
-      message: 'Produit non trouvé'
-    });
-  }
-
-  Product.findById(productId)
-    .then(product => {
-      if (!product) {
-        return res.status(404).json({
-          message: 'Produit non trouvé'
-        });
-      }
-
-      product.title = title;
-      product.desc = desc;
-      product.imageUrl = imageUrl;
-      product.categoryId = categoryId;
-      product.price = price;
-      product.isSold = isSold;
-      return product.save();
-    })
-    .then(result => {
-      res.status(200).json({
-        message: 'Produit mis à jour avec succès',
-        product: result
-      });
-    })
-    .catch(err => {
-      next(err);
-    });
-};
 
 
 

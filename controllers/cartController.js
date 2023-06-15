@@ -12,7 +12,7 @@ exports.getCart = (req, res, next) => {
     .populate('products.productId', '_id title')
     .then(cart => {
       if (!cart) {
-        return res.status(404).json({ message: "Le panier n'a pas été trouvé." });
+        return res.status(404).json({ message: "The cart was not found." });
       }
 
       if (cart.products.length === 0) {
@@ -29,7 +29,7 @@ exports.getCart = (req, res, next) => {
       res.status(200).json(products);
     })
     .catch(error => {
-      res.status(500).json({ error: "Une erreur est survenue lors de la récupération du panier.", error });
+      res.status(500).json({ error: "An error occurred while fetching the cart.", error });
     });
 };
 
@@ -41,7 +41,7 @@ exports.addToCart = (req, res, next) => {
   Product.findById(productId)
     .then(product => {
       if (!product) {
-        return res.status(404).json({ error: 'Produit introuvable' });
+        return res.status(404).json({ error: 'Product not found' });
       }
 
       Cart.findOne({ userId })
@@ -60,19 +60,19 @@ exports.addToCart = (req, res, next) => {
                         Product.findByIdAndUpdate(productId, { isSold: true })
                           .then(() => {
                             // Renvoyer l'ID du produit ajouté et un message de confirmation
-                            res.status(200).json({ productId: product._id, message: 'Produit ajouté au panier avec succès' });
+                            res.status(200).json({ productId: product._id, message: 'Product added to cart successfully' });
                           })
                           .catch(err => {
-                            res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de la propriété isSold du produit" });
+                            res.status(500).json({ error: "An error occurred while updating the isSold property of the product" });
                           });
                       })
                       .catch(err => {
-                        res.status(500).json({ error: "Une erreur est survenue lors de l'ajout du produit au panier" });
+                        res.status(500).json({ error: "An error occurred while adding the product to the cart" });
                       });
                   });
               })
               .catch(err => {
-                res.status(500).json({ error: "Une erreur est survenue lors de l'ajout du produit au panier" });
+                res.status(500).json({ error: "An error occurred while adding the product to the cart" });
               });
           }
 
@@ -80,7 +80,7 @@ exports.addToCart = (req, res, next) => {
           const existingProduct = cart.products.find(p => p.productId.toString() === productId);
 
           if (existingProduct) {
-            return res.status(409).json({ error: 'Le produit est déjà présent dans le panier' });
+            return res.status(409).json({ error: 'The product is already present in the cart' });
           }
 
           cart.products.push({ productId: product._id, isSold: true });
@@ -93,26 +93,26 @@ exports.addToCart = (req, res, next) => {
                   Product.findByIdAndUpdate(productId, { isSold: true })
                     .then(() => {
                       // Renvoyer l'ID du produit ajouté et un message de confirmation
-                      res.status(200).json({ productId: product._id, message: 'Produit ajouté au panier avec succès' });
+                      res.status(200).json({ productId: product._id, message: 'Product added to cart successfully' });
                     })
                     .catch(err => {
-                      res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de la propriété isSold du produit" });
+                      res.status(500).json({ error: "An error occurred while updating the isSold property of the product" });
                     });
                 })
                 .catch(err => {
-                  res.status(500).json({ error: "Une erreur est survenue lors de l'ajout du produit au panier" });
+                  res.status(500).json({ error: "An error occurred while adding the product to the cart" });
                 });
             })
             .catch(err => {
-              res.status(500).json({ error: "Une erreur est survenue lors de l'ajout du produit au panier" });
+              res.status(500).json({ error: "An error occurred while adding the product to the cart" });
             });
         })
         .catch(err => {
-          res.status(404).json({ error: 'Le panier n\'a pas été trouvé' });
+          res.status(404).json({ error: 'The cart was not found' });
         });
     })
     .catch(err => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la récupération du produit' });
+      res.status(500).json({ error: 'An error occurred while fetching the product' });
     });
 };
 
@@ -125,19 +125,19 @@ exports.removeFromCart = (req, res, next) => {
   User.findById(userId)
     .then(user => {
       if (!user) {
-        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        return res.status(404).json({ error: 'User not found' });
       }
 
       Cart.findOne({ userId })
         .then(cart => {
           if (!cart) {
-            return res.status(404).json({ error: 'Panier non trouvé' });
+            return res.status(404).json({ error: 'Cart not found' });
           }
 
           const productIndex = cart.products.findIndex(item => item.productId.toString() === productId);
 
           if (productIndex === -1) {
-            return res.status(404).json({ error: 'Produit non trouvé dans le panier' });
+            return res.status(404).json({ error: 'Product not found in the cart' });
           }
 
           const removedProduct = cart.products[productIndex];
@@ -149,22 +149,22 @@ exports.removeFromCart = (req, res, next) => {
               user.cart = savedCart.products.map(item => item.productId);
               user.save()
                 .then(() => {
-                  res.status(200).json({ productId: removedProduct.productId, message: 'Produit supprimé du panier avec succès' });
+                  res.status(200).json({ productId: removedProduct.productId, message: 'Product removed from cart successfully' });
                 })
                 .catch(err => {
-                  res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour du panier de l\'utilisateur' });
+                  res.status(500).json({ error: 'An error occurred while updating the user\'s cart' });
                 });
             })
             .catch(err => {
-              res.status(500).json({ error: 'Une erreur est survenue lors de la suppression du produit du panier' });
+              res.status(500).json({ error: 'An error occurred while removing the product from the cart' });
             });
         })
         .catch(err => {
-          res.status(500).json({ error: 'Une erreur est survenue lors de la récupération du panier' });
+          res.status(500).json({ error: 'An error occurred while fetching the cart' });
         });
     })
     .catch(err => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de l\'utilisateur' });
+      res.status(500).json({ error: 'An error occurred while fetching the user' });
     });
 };
 

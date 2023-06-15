@@ -18,7 +18,6 @@ const isAdmin = require('../middleware/is-admin')
 router.get('/products', productsController.getProducts);
 router.get('/products/:productId', productsController.getProduct);
 router.post('/products', isAuth, productsController.createProduct);
-router.put('/products/:productId', isAuth, productsController.updateProduct);
 router.delete('/products/:productId', isAuth, productsController.deleteProduct);
 router.get('/products/user/:userId',productsController.getProductsByUser);
 

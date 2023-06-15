@@ -72,9 +72,13 @@ exports.updateCategory = (req, res, next) => {
       res.status(200).json({ message: 'The category has been updated successfully.', category: result });
     })
     .catch(error => {
+      if (error.name === 'CastError') {
+        return res.status(404).json({ error: 'The requested category does not exist.' });
+      }
       res.status(500).json({ error: 'An error occurred while updating the category.', error });
     });
 };
+
 
 // Supprimer une catégorie existante
 exports.deleteCategory = (req, res, next) => {
@@ -89,6 +93,10 @@ exports.deleteCategory = (req, res, next) => {
       res.status(200).json({ message: 'The category has been deleted successfully.' });
     })
     .catch(error => {
+      if (error.name === 'CastError') {
+        return res.status(404).json({ error: 'The requested category does not exist.' });
+      }
       res.status(500).json({ error: 'An error occurred while deleting the category.', error });
     });
 };
+
