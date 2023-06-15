@@ -11,7 +11,7 @@ const searchController = require('../controllers/searchController');
 // isAuth est un middleware qui vérifie si l'utilisateur est authentifié
 const isAuth = require('../middleware/is-auth');
 //isAdmin est un middleware qui vérifie si l'utilisateur est administrateur
-const isAdmin = require('../middleware/is-Admin')
+const isAdmin = require('../middleware/is-admin')
 
 
 //Route products

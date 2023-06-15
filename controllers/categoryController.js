@@ -9,7 +9,7 @@ exports.getCategories = (req, res, next) => {
       res.status(200).json(categories);
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des catégories.', error });
+      res.status(500).json({ error: 'An error occurred while retrieving the categories.', error });
     });
 };
 
@@ -20,15 +20,19 @@ exports.getCategoryById = (req, res, next) => {
   Category.findById(categoryId)
     .then(category => {
       if (!category) {
-        return res.status(404).json({ error: 'La catégorie demandée n\'existe pas.' });
+        return res.status(404).json({ error: 'The requested category was not found.' });
       }
       res.status(200).json(category);
     })
     .catch(error => {
-        res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de la catégorie.', error });
-      });
-      
+        if (error.name === 'CastError') {
+          return res.status(404).json({ error: 'The requested category was not found.' });
+        }
+        res.status(500).json({ error: 'An error occurred while retrieving the category.', error });
+    });
 };
+
+
 
 // Créer une nouvelle catégorie
 exports.createCategory = (req, res, next) => {
@@ -41,10 +45,10 @@ exports.createCategory = (req, res, next) => {
 
   category.save()
     .then(result => {
-      res.status(201).json({ message: 'La catégorie a été créée avec succès.', category: result });
+      res.status(201).json({ message: 'The category has been created successfully.', category: result });
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la création de la catégorie.', error });
+      res.status(500).json({ error: 'An error occurred while creating the category.', error });
     });
 };
 
@@ -56,7 +60,7 @@ exports.updateCategory = (req, res, next) => {
   Category.findById(categoryId)
     .then(category => {
       if (!category) {
-        return res.status(404).json({ error: 'La catégorie demandée n\'existe pas.' });
+        return res.status(404).json({ error: 'The requested category does not exist.' });
       }
 
       category.name = name;
@@ -65,10 +69,10 @@ exports.updateCategory = (req, res, next) => {
       return category.save();
     })
     .then(result => {
-      res.status(200).json({ message: 'La catégorie a été mise à jour avec succès.', category: result });
+      res.status(200).json({ message: 'The category has been updated successfully.', category: result });
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la catégorie.', error });
+      res.status(500).json({ error: 'An error occurred while updating the category.', error });
     });
 };
 
@@ -79,12 +83,12 @@ exports.deleteCategory = (req, res, next) => {
   Category.findByIdAndRemove(categoryId)
     .then(category => {
       if (!category) {
-        return res.status(404).json({ error: 'La catégorie demandée n\'existe pas.' });
+        return res.status(404).json({ error: 'The requested category does not exist.' });
       }
 
-      res.status(200).json({ message: 'La catégorie a été supprimée avec succès.' });
+      res.status(200).json({ message: 'The category has been deleted successfully.' });
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la suppression de la catégorie.', error });
+      res.status(500).json({ error: 'An error occurred while deleting the category.', error });
     });
 };

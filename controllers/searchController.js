@@ -12,6 +12,6 @@ exports.searchProducts = (req, res, next) => {
       res.status(200).json(products);
     })
     .catch(err => {
-      res.status(500).json({ error: 'Une erreur s\'est produite lors de la recherche des produits.' });
+      res.status(500).json({ error: 'An error occurred while searching for the products.' });
     });
 };

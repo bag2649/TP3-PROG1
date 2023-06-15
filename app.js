@@ -48,7 +48,7 @@ app.use(errorController.get404);
 app.use(errorController.logErrors);
 
 
-mongoose.connect('mongodb+srv://gab123:gab123@cluster0.8vompy4.mongodb.net/TP3?retryWrites=true&w=majority')
+mongoose.connect('mongodb://127.0.0.1:27017/TP3')
   .then(() => {
     console.log('La connexion à la base de données est établie')
     app.listen(PORT, () => {
@@ -61,3 +61,4 @@ mongoose.connect('mongodb+srv://gab123:gab123@cluster0.8vompy4.mongodb.net/TP3?r
 
 
 
+//mongodb+srv://gab123:gab123@cluster0.8vompy4.mongodb.net/TP3?retryWrites=true&w=majority

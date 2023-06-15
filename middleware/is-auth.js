@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');
   console.log('authHeader', authHeader)
   if (!authHeader) {
-    return res.status(401).json({ error: 'Non authentifié..' });
+    return res.status(401).json({ error: 'Unauthenticated.' });
   }
   const token = authHeader.split(' ')[1];
   let decodedToken;
@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
     return next(err);
   }
   if (!decodedToken) {
-    const error = new Error('Non authentifié.');
+    const error = new Error('Unauthenticated.');
     error.statusCode = 401;
     return next(error);
   }

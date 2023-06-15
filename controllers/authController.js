@@ -16,7 +16,7 @@ exports.login = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        const error = new Error('Utilisateur non trouvé');
+        const error = new Error('User not found');
         error.statusCode = 404;
         throw error;
       }
@@ -26,7 +26,7 @@ exports.login = (req, res, next) => {
     })
     .then((isEqual) => {
       if (!isEqual) {
-        const error = new Error('Mauvais mot de passe !');
+        const error = new Error('Wrong password!');
         error.statusCode = 401;
         throw error;
       }
@@ -74,7 +74,7 @@ exports.signup = (req, res, next) => {
       return user.save();
     })
     .then(result => {
-      res.status(201).json({message: "Utilisateur créé !", userId: result.id});
+      res.status(201).json({message: "User created!", userId: result.id});
     })
     .catch(err => {
       next(err);

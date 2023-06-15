@@ -8,7 +8,7 @@ exports.getUsers = (req, res, next) => {
       res.status(200).json(users);
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des utilisateurs.', error });
+      res.status(500).json({ error: 'An error occurred while retrieving the users.', error });
     });
 };
 
@@ -18,52 +18,53 @@ exports.getUserById = (req, res, next) => {
   User.findById(userId, '-email -password')
     .then(user => {
       if (!user) {
-        return res.status(404).json({ error: "L'utilisateur demandé n'existe pas." });
+        return res.status(404).json({ error: "The requested user does not exist." });
       }
       res.status(200).json(user);
     })
     .catch(error => {
       if (error.name === 'CastError' && error.kind === 'ObjectId') {
-        return res.status(404).json({ error: "L'utilisateur demandé n'existe pas." });
+        return res.status(404).json({ error: "The requested user does not exist." });
       }
-      res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de l\'utilisateur.', error });
+      res.status(500).json({ error: 'An error occurred while retrieving the user.', error });
     });
 };
 
 
 
-  exports.getUserProfile = (req, res, next) => {
-    const userId = req.user.userId; // Utilisez req.user.userId au lieu de req.userId
-    console.log(userId);
-    User.findOne({ _id: userId }, '-email -password')
-      .then(user => {
-        if (!user) {
-          return res.status(404).json({ error: "L'utilisateur connecté n'existe pas." });
-        }
-        res.status(200).json(user);
-      })
-      .catch(error => {
-        res.status(500).json({ error: "Une erreur est survenue lors de la récupération de l'utilisateur.", error });
-      });
-  };
-  
-  
+
+exports.getUserProfile = (req, res, next) => {
+  const userId = req.userId;
+  console.log(userId);
+  User.findOne({ _id: userId }, '-email -password')
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ error: "The connected user does not exist." });
+      }
+      res.status(200).json(user);
+    })
+    .catch(error => {
+      res.status(500).json({ error: "An error occurred while retrieving the user.", error });
+    });
+};
+
 
 
 exports.updateUser = (req, res, next) => {
   const userId = req.params.id;
-  const { firstname, lastname, city } = req.body;
+  const { firstname, lastname, city, email, password} = req.body;
 
   if (req.userId !== userId) {
-    return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à modifier cet utilisateur.' });
+    return res.status(403).json({ error: 'You are not authorized to modify this user.' });
   }
 
   User.findById(userId)
     .then(user => {
       if (!user) {
-        return res.status(404).json({ error: 'L\'utilisateur demandé n\'existe pas.' });
+        return res.status(404).json({ error: 'The requested user does not exist.' });
       }
-
+      user.password = password;
+      user.email = email;
       user.firstname = firstname;
       user.lastname = lastname;
       user.city = city;
@@ -71,10 +72,10 @@ exports.updateUser = (req, res, next) => {
       return user.save();
     })
     .then(result => {
-      res.status(200).json({ message: 'L\'utilisateur a été mis à jour avec succès.', user: result });
+      res.status(200).json({ message: 'The user has been updated successfully.', user: result });
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de l\'utilisateur.', error });
+      res.status(500).json({ error: 'An error occurred while updating the user.', error });
     });
 };
 
@@ -84,18 +85,19 @@ exports.deleteUser = (req, res, next) => {
   const userId = req.params.id;
 
   if (req.userId !== userId) {
-    return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à supprimer cet utilisateur.' });
+    return res.status(403).json({ error: "You are not authorized to delete this user." });
   }
 
   User.findByIdAndRemove(userId)
     .then(user => {
       if (!user) {
-        return res.status(404).json({ error: 'L\'utilisateur demandé n\'existe pas.' });
+        return res.status(404).json({ error: "The requested user does not exist." });
       }
 
-      res.status(200).json({ message: 'L\'utilisateur a été supprimé avec succès.' });
+      res.status(200).json({ message: "The user has been successfully deleted." });
     })
     .catch(error => {
-      res.status(500).json({ error: 'Une erreur est survenue lors de la suppression de l\'utilisateur.', error });
+      res.status(500).json({ error: "An error occurred while deleting the user.", error });
     });
 };
+

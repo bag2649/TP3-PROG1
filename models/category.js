@@ -3,15 +3,15 @@ const Schema = mongoose.Schema;
 
 const categorySchema = new Schema({
     name: {
-      type: String,
-      required: [true, 'Le nom de la catégorie est requis.'],
-      maxlength: [50, 'Le nom de la catégorie ne peut pas dépasser 50 caractères.']
+        type: String,
+        required: [true, 'The category name is required.'],
+        maxlength: [50, 'The category name cannot exceed 50 characters.']
     },
     description: {
-      type: String,
-      required: false,
-      maxlength: [255, 'La description de la catégorie ne peut pas dépasser 255 caractères.']
+        type: String,
+        required: false,
+        maxlength: [255, 'The category description cannot exceed 255 characters.']
     }
-  });
-  
-  module.exports = mongoose.model('Category', categorySchema);
+});
+
+module.exports = mongoose.model('Category', categorySchema);
