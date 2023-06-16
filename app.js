@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
-
+const isAdmin = require('./middleware/is-admin')
 // Importe les routes
 const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/auth');

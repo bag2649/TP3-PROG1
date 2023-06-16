@@ -24,9 +24,9 @@ router.get('/products/user/:userId',productsController.getProductsByUser);
 //Route categories
 router.get('/categories', categoryController.getCategories);
 router.get('/categories/:id', categoryController.getCategoryById);
-router.post('/categories',isAuth,  categoryController.createCategory);
-router.put('/categories/:id',isAuth,  categoryController.updateCategory);
-router.delete('/categories/:id',isAuth,  categoryController.deleteCategory);
+router.post('/categories',isAuth, categoryController.createCategory);
+router.put('/categories/:id',isAuth, categoryController.updateCategory);
+router.delete('/categories/:id',isAuth, categoryController.deleteCategory);
 
 //Route users
 router.get('/users', userController.getUsers);
