@@ -11,7 +11,7 @@ const searchController = require('../controllers/searchController');
 // isAuth est un middleware qui vérifie si l'utilisateur est authentifié
 const isAuth = require('../middleware/is-auth');
 //isAdmin est un middleware qui vérifie si l'utilisateur est administrateur
-const isAdmin = require('middleware/is-admin')
+
 
 
 //Route products
@@ -24,9 +24,9 @@ router.get('/products/user/:userId',productsController.getProductsByUser);
 //Route categories
 router.get('/categories', categoryController.getCategories);
 router.get('/categories/:id', categoryController.getCategoryById);
-router.post('/categories',isAuth, isAdmin, categoryController.createCategory);
-router.put('/categories/:id',isAuth, isAdmin, categoryController.updateCategory);
-router.delete('/categories/:id',isAuth, isAdmin, categoryController.deleteCategory);
+router.post('/categories',isAuth,  categoryController.createCategory);
+router.put('/categories/:id',isAuth,  categoryController.updateCategory);
+router.delete('/categories/:id',isAuth,  categoryController.deleteCategory);
 
 //Route users
 router.get('/users', userController.getUsers);

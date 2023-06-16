@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   });
   
 
-//app.use(isAdminMiddleware);
+  app.all('*', isAdmin);
 // Utilisation des routes en tant que middleware
 // route /auth
 app.use('/auth', authRoutes);
