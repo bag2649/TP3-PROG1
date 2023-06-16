@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
-const isAdmin = require('./middleware/is-admin')
+
 // Importe les routes
 const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/auth');
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   });
   
 
-  app.all('*', isAdmin);
+
 // Utilisation des routes en tant que middleware
 // route /auth
 app.use('/auth', authRoutes);
@@ -48,7 +48,7 @@ app.use(errorController.get404);
 app.use(errorController.logErrors);
 
 
-mongoose.connect('mongodb+srv://gab123:gab123@cluster0.8vompy4.mongodb.net/TP3?retryWrites=true&w=majority')
+mongoose.connect('mongodb://127.0.0.1:27017/TP3')
   .then(() => {
     console.log('La connexion à la base de données est établie')
     app.listen(PORT, () => {

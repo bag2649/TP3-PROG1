@@ -1,7 +1,7 @@
 "use strict";
 
 const Category = require('../models/category');
-
+const User = require('../models/user');
 // Récupérer la liste de toutes les catégories
 exports.getCategories = (req, res, next) => {
   Category.find()
@@ -38,12 +38,27 @@ exports.getCategoryById = (req, res, next) => {
 exports.createCategory = (req, res, next) => {
   const { name, description } = req.body;
 
-  const category = new Category({
-    name: name,
-    description: description
-  });
+  // Vérifier si l'utilisateur est administrateur
+  const userId = req.userId;
 
-  category.save()
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+
+      if (!user.isAdmin) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action.' });
+      }
+
+      // L'utilisateur est administrateur, créer la catégorie
+      const category = new Category({
+        name: name,
+        description: description
+      });
+
+      return category.save();
+    })
     .then(result => {
       res.status(201).json({ message: 'The category has been created successfully.', category: result });
     })
@@ -52,30 +67,49 @@ exports.createCategory = (req, res, next) => {
     });
 };
 
+
 // Mettre à jour une catégorie existante
 exports.updateCategory = (req, res, next) => {
   const categoryId = req.params.id;
   const { name, description } = req.body;
-
-  Category.findById(categoryId)
-    .then(category => {
-      if (!category) {
-        return res.status(404).json({ error: 'The requested category does not exist.' });
+  const userId = req.userId; // Assurez-vous d'avoir le bon identifiant de l'utilisateur ici
+console.log(userId)
+  // Vérification si l'utilisateur est administrateur
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
       }
 
-      category.name = name;
-      category.description = description;
+      if (!user.isAdmin) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action.' });
+      }
 
-      return category.save();
-    })
-    .then(result => {
-      res.status(200).json({ message: 'The category has been updated successfully.', category: result });
+      // L'utilisateur est un administrateur, poursuivre avec la mise à jour de la catégorie
+
+      Category.findById(categoryId)
+        .then(category => {
+          if (!category) {
+            return res.status(404).json({ error: 'The requested category does not exist.' });
+          }
+
+          category.name = name;
+          category.description = description;
+
+          return category.save();
+        })
+        .then(result => {
+          res.status(200).json({ message: 'The category has been updated successfully.', category: result });
+        })
+        .catch(error => {
+          if (error.name === 'CastError') {
+            return res.status(404).json({ error: 'The requested category does not exist.' });
+          }
+          res.status(500).json({ error: 'An error occurred while updating the category.', error });
+        });
     })
     .catch(error => {
-      if (error.name === 'CastError') {
-        return res.status(404).json({ error: 'The requested category does not exist.' });
-      }
-      res.status(500).json({ error: 'An error occurred while updating the category.', error });
+      res.status(500).json({ error: 'An error occurred while checking permissions.', error });
     });
 };
 
@@ -84,19 +118,37 @@ exports.updateCategory = (req, res, next) => {
 exports.deleteCategory = (req, res, next) => {
   const categoryId = req.params.id;
 
-  Category.findByIdAndRemove(categoryId)
-    .then(category => {
-      if (!category) {
-        return res.status(404).json({ error: 'The requested category does not exist.' });
+  // Vérifier si l'utilisateur est administrateur
+  const userId = req.userId;
+
+  User.findById(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
       }
 
-      res.status(200).json({ message: 'The category has been deleted successfully.' });
+      if (!user.isAdmin) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action.' });
+      }
+
+      // L'utilisateur est administrateur, supprimer la catégorie
+      Category.findByIdAndRemove(categoryId)
+        .then(category => {
+          if (!category) {
+            return res.status(404).json({ error: 'The requested category does not exist.' });
+          }
+
+          res.status(200).json({ message: 'The category has been deleted successfully.' });
+        })
+        .catch(error => {
+          if (error.name === 'CastError') {
+            return res.status(404).json({ error: 'The requested category does not exist.' });
+          }
+          res.status(500).json({ error: 'An error occurred while deleting the category.', error });
+        });
     })
     .catch(error => {
-      if (error.name === 'CastError') {
-        return res.status(404).json({ error: 'The requested category does not exist.' });
-      }
-      res.status(500).json({ error: 'An error occurred while deleting the category.', error });
+      res.status(500).json({ error: 'An error occurred while checking permissions.', error });
     });
 };
 
